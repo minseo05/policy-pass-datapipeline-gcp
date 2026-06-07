@@ -12,7 +12,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from config.models import resolve_model_key
+from config.models import MODELS, resolve_model_key
 from scripts.experiments._common import (
     BASE_OUTPUT_DIR,
     CHECKPOINT_INTERVAL,
@@ -50,18 +50,18 @@ def main(resume: bool = False) -> Path:
     cost_tracker = CostTracker()
     strategy = SearchStrategy(DEFAULT_STRATEGY)
 
-    conditions = [(f"{mk}__rag", resolve_model_key(mk)) for mk in EXPERIMENT_MODELS]
-    conditions.append((f"{NO_RAG_MODEL}__no_rag", resolve_model_key(NO_RAG_MODEL)))
+    conditions = [(f"{mk}__rag", resolve_model_key(mk), mk) for mk in EXPERIMENT_MODELS]
+    conditions.append((f"{NO_RAG_MODEL}__no_rag", resolve_model_key(NO_RAG_MODEL), NO_RAG_MODEL))
 
     checkpoint_dir = OUTPUT_DIR / "checkpoint"
-    results: dict[str, list] = {cond: [] for cond, _ in conditions}
+    results: dict[str, list] = {cond: [] for cond, _, _ in conditions}
 
     completed_keys: set[str] = set()
     if resume:
         ckpt, _ = load_latest_checkpoint(checkpoint_dir, "step2")
         if ckpt and isinstance(ckpt, dict) and "results" in ckpt:
-            results = ckpt["results"]
-            for cond, samples in results.items():
+            for cond, samples in ckpt["results"].items():
+                results[cond] = samples
                 for s in samples:
                     completed_keys.add(f"{cond}_{s['id']}")
             logger.info("체크포인트 복원: %d건 완료", len(completed_keys))
@@ -71,7 +71,7 @@ def main(resume: bool = False) -> Path:
     total_work = len(conditions) * len(qa_samples)
     done = len(completed_keys)
 
-    for cond_key, model_id in conditions:
+    for cond_key, model_id, model_key in conditions:
         is_no_rag = cond_key.endswith("__no_rag")
 
         for idx, sample in enumerate(qa_samples):
@@ -105,7 +105,13 @@ def main(resume: bool = False) -> Path:
 
             try:
                 with Timer() as gt:
-                    llm_resp = generate(messages, model=model_id, temperature=0.0, max_tokens=2048)
+                    mcfg = MODELS.get(model_key, {})
+                    llm_resp = generate(
+                        messages,
+                        model=model_id,
+                        temperature=mcfg.get("temperature", 0.0),
+                        max_tokens=mcfg.get("max_tokens", 2048),
+                    )
                 generation_latency = gt.elapsed
 
                 cost_tracker.record(

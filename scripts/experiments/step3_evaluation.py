@@ -45,7 +45,7 @@ def _alarm_handler(signum, frame):
     raise _SampleTimeout("sample timeout")
 
 
-def main(resume: bool = False) -> tuple[Path, Path]:
+def main(resume: bool = False, conditions: list[str] | None = None) -> tuple[Path, Path]:
     setup_logging("step3_evaluation", OUTPUT_DIR)
     logger.info("=== 실험 B+C+D: 3단계 평가 시작 ===")
 
@@ -57,28 +57,48 @@ def main(resume: bool = False) -> tuple[Path, Path]:
         for s in samples:
             all_samples.append({**s, "condition": cond_key})
 
-    logger.info("평가 대상: %d건 (%d 조건)", len(all_samples), len(gen_results))
+    existing_primary: list[dict] = []
+    existing_expensive: list[dict] = []
+
+    if conditions:
+        cond_set = set(conditions)
+        target_samples = [s for s in all_samples if s["condition"] in cond_set]
+        logger.info("재평가 대상: %d건 (%s)", len(target_samples), ", ".join(conditions))
+
+        primary_file = OUTPUT_DIR / "eval_gpt4o_mini_judge.json"
+        expensive_file = OUTPUT_DIR / "eval_gemini_pro_judge.json"
+        if primary_file.exists():
+            existing_primary = [r for r in load_json(primary_file)["results"] if r["condition"] not in cond_set]
+        if expensive_file.exists():
+            existing_expensive = [r for r in load_json(expensive_file)["results"] if r["condition"] not in cond_set]
+
+        resume = False
+    else:
+        target_samples = all_samples
+        logger.info("평가 대상: %d건 (%d 조건)", len(target_samples), len(gen_results))
 
     primary_path = _run_evaluation(
-        all_samples,
+        target_samples,
         judge_model=JUDGE_PRIMARY,
         label="gpt4o_mini",
         run_ragas=True,
         run_safety=True,
         resume=resume,
+        existing_results=existing_primary,
     )
 
     primary_data = load_json(primary_path)
     ragas_safety_cache = _build_ragas_safety_cache(primary_data)
 
     expensive_path = _run_evaluation(
-        all_samples,
+        target_samples,
         judge_model=JUDGE_EXPENSIVE,
         label="gemini_pro",
         run_ragas=False,
         run_safety=False,
         ragas_safety_cache=ragas_safety_cache,
         resume=resume,
+        existing_results=existing_expensive,
     )
 
     logger.info("=== 실험 B+C+D 완료 ===")
@@ -93,10 +113,11 @@ def _run_evaluation(
     run_safety: bool,
     ragas_safety_cache: dict[str, dict] | None = None,
     resume: bool = False,
+    existing_results: list[dict] | None = None,
 ) -> Path:
     """단일 Judge 모델로 평가 실행."""
     from src.evaluation.llm_judge import judge_response
-    from src.evaluation.ragas_metrics import evaluate_ragas
+    from src.evaluation.ragas_metrics import _reset_ragas_clients, evaluate_ragas
     from src.evaluation.safety_metrics import evaluate_safety
 
     old_handler = signal.signal(signal.SIGALRM, _alarm_handler)
@@ -192,6 +213,7 @@ def _run_evaluation(
 
         except _SampleTimeout:
             logger.error("[%d/%d] %s/%s — %ds 타임아웃, 건너뜀", idx + 1, total, cond, sample_id, SAMPLE_TIMEOUT)
+            _reset_ragas_clients()
             eval_entry = {
                 "ragas": eval_entry.get("ragas"),
                 "judge": eval_entry.get("judge"),
@@ -209,10 +231,12 @@ def _run_evaluation(
 
     signal.signal(signal.SIGALRM, old_handler)
 
+    merged = (existing_results or []) + evaluated
+
     output = {
         "run_id": make_run_id(f"step3_{label}"),
         "config": {"judge_model": judge_model, "source": str(GENERATION_RESULTS_PATH)},
-        "results": evaluated,
+        "results": merged,
         "cost": cost_tracker.summary(),
     }
 
@@ -244,9 +268,17 @@ def _build_ragas_safety_cache(primary_data: dict) -> dict[str, dict]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="실험 B+C+D: 3단계 평가")
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--conditions",
+        type=str,
+        default=None,
+        help="재평가할 조건 (콤마 구분, 예: gpt-5.4-mini__rag,gemini-3.5-flash__rag)",
+    )
     args = parser.parse_args()
 
     from dotenv import load_dotenv
 
     load_dotenv()
-    main(resume=args.resume)
+
+    cond_list = args.conditions.split(",") if args.conditions else None
+    main(resume=args.resume, conditions=cond_list)

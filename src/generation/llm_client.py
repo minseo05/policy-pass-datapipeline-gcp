@@ -31,6 +31,7 @@ _RETRY_BASE_DELAY = 1.0
 
 _VERTEX_LOCATION_OVERRIDES: dict[str, str] = {
     "vertex_ai/gemini-2.5-pro": "us-central1",
+    "vertex_ai/gemini-3.5-flash": "global",
     "vertex_ai/gemini-3.1-pro-preview": "global",
     "vertex_ai/claude-sonnet-4-5": "us-east5",
 }

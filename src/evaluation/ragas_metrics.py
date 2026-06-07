@@ -10,15 +10,12 @@ from src.evaluation import RagasResult
 
 logger = logging.getLogger(__name__)
 
-_ragas_llm = None
-_ragas_embeddings = None
+
+def _reset_ragas_clients() -> None:
+    pass
 
 
 def _make_llm():
-    global _ragas_llm  # noqa: PLW0603
-    if _ragas_llm is not None:
-        return _ragas_llm
-
     from openai import AsyncOpenAI
 
     try:
@@ -27,15 +24,10 @@ def _make_llm():
         raise RuntimeError("RAGAS LLM factory import failed") from e
 
     client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"], timeout=60.0)
-    _ragas_llm = llm_factory("gpt-4o-mini", client=client)
-    return _ragas_llm
+    return llm_factory("gpt-4o-mini", client=client)
 
 
 def _make_embeddings():
-    global _ragas_embeddings  # noqa: PLW0603
-    if _ragas_embeddings is not None:
-        return _ragas_embeddings
-
     from openai import AsyncOpenAI
 
     try:
@@ -44,8 +36,7 @@ def _make_embeddings():
         raise RuntimeError("RAGAS embeddings import failed") from e
 
     client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"], timeout=60.0)
-    _ragas_embeddings = OpenAIEmbeddings(client=client)
-    return _ragas_embeddings
+    return OpenAIEmbeddings(client=client)
 
 
 def evaluate_ragas(

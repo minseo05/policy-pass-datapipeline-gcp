@@ -14,14 +14,16 @@ BASE_OUTPUT_DIR = Path("data/experiments")
 MODEL_PRICING: dict[str, tuple[float, float]] = {
     "openai/gpt-4o": (2.50, 10.00),
     "openai/gpt-4o-mini": (0.15, 0.60),
+    "openai/gpt-5.4-mini": (0.40, 1.60),
     "vertex_ai/gemini-2.5-flash": (0.15, 0.60),
     "vertex_ai/gemini-2.5-pro": (1.25, 5.00),
+    "vertex_ai/gemini-3.5-flash": (1.50, 9.00),
     "claude-sonnet-4-5": (3.00, 15.00),
     "huggingface/meta-llama/Llama-3.3-70B-Instruct": (0.0, 0.0),
     "vertex_ai/gemini-3.1-pro-preview": (2.00, 12.00),
 }
 
-EXPERIMENT_MODELS = ["gpt-4o-mini", "gpt-4o", "claude-sonnet", "gemini-flash", "llama3"]
+EXPERIMENT_MODELS = ["gpt-4o-mini", "gpt-4o", "claude-sonnet", "gemini-flash", "llama3", "gpt-5.4-mini", "gemini-3.5-flash"]
 NO_RAG_MODEL = "gpt-4o-mini"
 DEFAULT_STRATEGY = "hybrid_rerank"
 DEFAULT_TOP_K = 5

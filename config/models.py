@@ -45,6 +45,18 @@ MODELS: dict[str, ModelConfig] = {
         "temperature": 0.0,
         "max_tokens": 2048,
     },
+    "gpt-5.4-mini": {
+        "id": "openai/gpt-5.4-mini",
+        "description": "GPT-5.4 Mini (OpenAI, 2026-03)",
+        "temperature": 0.0,
+        "max_tokens": 2048,
+    },
+    "gemini-3.5-flash": {
+        "id": "vertex_ai/gemini-3.5-flash",
+        "description": "Gemini 3.5 Flash (Google, 2026-05)",
+        "temperature": 0.0,
+        "max_tokens": 8192,
+    },
 }
 
 
