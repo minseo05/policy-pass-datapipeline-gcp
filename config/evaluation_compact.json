@@ -1,0 +1,59 @@
+{
+  "version": "compact-rag-eval-v1",
+  "description": "RAGAS + LLM-as-Judge + DeepEval 기반에 claim/citation/abstention/service 운영 지표만 보완하는 최소 평가 구성",
+  "qa": {
+    "judge_model": "vertex_ai/openai/gpt-4o-mini",
+    "metrics": [
+      "ragas.faithfulness",
+      "ragas.answer_relevancy",
+      "ragas.context_precision",
+      "ragas.context_recall",
+      "judge.citation_accuracy",
+      "judge.completeness",
+      "safety.hallucination_score",
+      "extra.claim_f1",
+      "extra.citation_support_rate",
+      "extra.abstention_accuracy"
+    ],
+    "thresholds": {
+      "ragas.faithfulness": 0.85,
+      "ragas.answer_relevancy": 0.80,
+      "ragas.context_precision": 0.75,
+      "ragas.context_recall": 0.80,
+      "judge.citation_accuracy": 4.0,
+      "judge.completeness": 4.0,
+      "safety.hallucination_score_max": 0.30,
+      "extra.claim_f1": 0.70,
+      "extra.citation_support_rate": 0.70,
+      "extra.abstention_accuracy": 1.0
+    }
+  },
+  "service": {
+    "judge_model": "vertex_ai/openai/gpt-4o-mini",
+    "recommended_sampling": {
+      "normal_traffic_rate": 0.05,
+      "error_or_low_confidence_rate": 1.0
+    },
+    "metrics": [
+      "ragas.faithfulness",
+      "ragas.answer_relevancy",
+      "judge.citation_accuracy",
+      "judge.completeness",
+      "safety.hallucination_score",
+      "extra.citation_support_rate",
+      "extra.abstention_accuracy",
+      "ops.total_latency_seconds",
+      "ops.total_tokens"
+    ],
+    "thresholds": {
+      "ragas.faithfulness": 0.80,
+      "ragas.answer_relevancy": 0.75,
+      "judge.citation_accuracy": 4.0,
+      "judge.completeness": 4.0,
+      "safety.hallucination_score_max": 0.35,
+      "extra.citation_support_rate": 0.65,
+      "extra.abstention_accuracy": 1.0,
+      "ops.total_latency_seconds_max": 10.0
+    }
+  }
+}
