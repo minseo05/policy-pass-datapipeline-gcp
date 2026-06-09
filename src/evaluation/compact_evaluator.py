@@ -124,7 +124,18 @@ class CompactRAGEvaluator:
             "extra": compute_extra_metrics(sample),
             "ops": build_operational_metrics(sample),
         }
-        result["quality_gate"] = quality_gate(result, self.thresholds)
+        thresholds = dict(self.thresholds)
+
+        extra = result.get("extra") or {}
+        is_successful_abstention = (
+            extra.get("expected_abstain") is True
+            and extra.get("did_abstain") is True
+        )
+
+        if is_successful_abstention:
+            thresholds.pop("extra.citation_support_rate", None)
+
+        result["quality_gate"] = quality_gate(result, thresholds)
         return result
 
     def evaluate_batch(self, samples: list[dict[str, Any]], mode: str, run_llm_metrics: bool = True) -> list[dict[str, Any]]:
