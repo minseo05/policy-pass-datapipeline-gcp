@@ -14,7 +14,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 REFERENCE_FIELDS = ("ground_truth", "reference", "expected_output")
 REQUIRED_FIELDS = ("id", "question")
 
@@ -126,9 +125,7 @@ def validate_sample(
 
     reference_text = get_reference_text(sample)
     if not reference_text:
-        errors.append(
-            f"{label}: ground_truth/reference/expected_output 중 하나는 필요합니다."
-        )
+        errors.append(f"{label}: ground_truth/reference/expected_output 중 하나는 필요합니다.")
 
     question = sample.get("question")
     if isinstance(question, str) and len(question.strip()) < 3:
@@ -137,15 +134,13 @@ def validate_sample(
     difficulty = sample.get("difficulty")
     if difficulty is not None and difficulty not in ALLOWED_DIFFICULTIES:
         warnings.append(
-            f"{label}: difficulty 값이 권장 범위를 벗어났습니다. "
-            f"현재={difficulty}, 권장={sorted(ALLOWED_DIFFICULTIES)}"
+            f"{label}: difficulty 값이 권장 범위를 벗어났습니다. 현재={difficulty}, 권장={sorted(ALLOWED_DIFFICULTIES)}"
         )
 
     qa_type = sample.get("qa_type")
     if qa_type is not None and qa_type not in ALLOWED_QA_TYPES:
         warnings.append(
-            f"{label}: qa_type 값이 권장 범위를 벗어났습니다. "
-            f"현재={qa_type}, 권장={sorted(ALLOWED_QA_TYPES)}"
+            f"{label}: qa_type 값이 권장 범위를 벗어났습니다. 현재={qa_type}, 권장={sorted(ALLOWED_QA_TYPES)}"
         )
 
     expected_claims = sample.get("expected_claims")
@@ -156,9 +151,7 @@ def validate_sample(
     else:
         for claim_index, claim in enumerate(expected_claims, start=1):
             if not isinstance(claim, str) or not claim.strip():
-                errors.append(
-                    f"{label}: expected_claims[{claim_index}]는 비어 있지 않은 문자열이어야 합니다."
-                )
+                errors.append(f"{label}: expected_claims[{claim_index}]는 비어 있지 않은 문자열이어야 합니다.")
 
     expected_abstain = sample.get("expected_abstain")
     if expected_abstain is None:
@@ -167,9 +160,7 @@ def validate_sample(
         errors.append(f"{label}: expected_abstain은 boolean이어야 합니다.")
     elif expected_abstain is True:
         if reference_text and not looks_like_abstain_text(reference_text):
-            warnings.append(
-                f"{label}: expected_abstain=true인데 ground_truth가 답변 불가 문장처럼 보이지 않습니다."
-            )
+            warnings.append(f"{label}: expected_abstain=true인데 ground_truth가 답변 불가 문장처럼 보이지 않습니다.")
 
     citations = sample.get("citations")
     if citations is not None:
@@ -185,9 +176,7 @@ def validate_sample(
                     errors.append(f"{label}: citations[{citation_index}].claim은 문자열이어야 합니다.")
 
                 if "source_ids" in citation and not isinstance(citation["source_ids"], list):
-                    errors.append(
-                        f"{label}: citations[{citation_index}].source_ids는 list여야 합니다."
-                    )
+                    errors.append(f"{label}: citations[{citation_index}].source_ids는 list여야 합니다.")
 
     return errors, warnings
 
@@ -244,9 +233,7 @@ def main() -> int:
 
     total_count = metadata.get("total_count")
     if isinstance(total_count, int) and total_count != len(samples):
-        warnings.append(
-            f"metadata.total_count({total_count})와 실제 samples 개수({len(samples)})가 다릅니다."
-        )
+        warnings.append(f"metadata.total_count({total_count})와 실제 samples 개수({len(samples)})가 다릅니다.")
 
     for index, sample in enumerate(samples):
         sample_errors, sample_warnings = validate_sample(sample, index, seen_ids)

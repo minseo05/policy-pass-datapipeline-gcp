@@ -196,7 +196,6 @@ def evaluation_pipeline():
 
         return compact_results
 
-
     @task()
     def save_results(eval_results: dict, **context) -> str:
         """평가 결과 리포트 저장."""
@@ -247,8 +246,6 @@ def evaluation_pipeline():
             output_paths[model_key] = str(output_path)
 
         return output_paths
-
-
 
     qa = load_qa_dataset()
     rag_results = generate_rag_responses(qa)

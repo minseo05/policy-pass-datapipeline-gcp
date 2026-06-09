@@ -127,10 +127,7 @@ class CompactRAGEvaluator:
         thresholds = dict(self.thresholds)
 
         extra = result.get("extra") or {}
-        is_successful_abstention = (
-            extra.get("expected_abstain") is True
-            and extra.get("did_abstain") is True
-        )
+        is_successful_abstention = extra.get("expected_abstain") is True and extra.get("did_abstain") is True
 
         if is_successful_abstention:
             thresholds.pop("extra.citation_support_rate", None)
@@ -138,7 +135,10 @@ class CompactRAGEvaluator:
         result["quality_gate"] = quality_gate(result, thresholds)
         return result
 
-    def evaluate_batch(self, samples: list[dict[str, Any]], mode: str, run_llm_metrics: bool = True) -> list[dict[str, Any]]:
+    def evaluate_batch(
+        self, samples: list[dict[str, Any]], mode: str, run_llm_metrics: bool = True
+    ) -> list[dict[str, Any]]:
+
         results: list[dict[str, Any]] = []
         for idx, sample in enumerate(samples, start=1):
             sample_id = sample.get("id") or sample.get("request_id") or f"sample_{idx}"

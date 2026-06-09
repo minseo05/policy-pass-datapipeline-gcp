@@ -21,6 +21,7 @@ from src.retrieval.pipeline import RetrievalPipeline, SearchStrategy
 
 logger = logging.getLogger(__name__)
 
+
 def _metadata_value(metadata: dict, *keys: str) -> str:
     """metadata에서 첫 번째로 존재하는 값을 문자열로 반환한다."""
     for key in keys:
@@ -65,6 +66,7 @@ def _build_source_identity(metadata: dict, rank: int) -> dict[str, str]:
         "policy_id": policy_id,
         "chunk_id": chunk_id,
     }
+
 
 class RAGPipeline:
     """검색 → 프롬프트 → 생성 통합 파이프라인."""

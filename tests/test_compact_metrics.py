@@ -41,9 +41,7 @@ def test_citation_support_rate_with_explicit_citation():
 def test_citation_support_rate_with_retrieved_context_fallback():
     score = citation_support_rate(
         answer="청년 월세 지원은 소득 요건을 확인해야 합니다.",
-        contexts=[
-            "청년 월세 지원 신청자는 소득 요건을 확인해야 한다."
-        ],
+        contexts=["청년 월세 지원 신청자는 소득 요건을 확인해야 한다."],
     )
 
     assert score.support_rate == 1.0

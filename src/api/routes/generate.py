@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 usage_logger = logging.getLogger("api.rag")
 router = APIRouter(prefix="/api/v1", tags=["generate"], dependencies=[Depends(require_api_key)])
 
+
 def _to_log_dict(item: object) -> dict:
     """Pydantic v1/v2 모델을 로그용 dict로 변환한다."""
     if hasattr(item, "model_dump"):
@@ -51,6 +52,7 @@ def _prepare_sources_for_eval_log(sources: list[SourceItem]) -> list[dict]:
         prepared.append(source_dict)
 
     return prepared
+
 
 @router.post("/generate", response_model=GenerateResponse)
 @limiter.limit("30/minute")

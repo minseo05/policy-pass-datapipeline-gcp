@@ -23,7 +23,15 @@ MODEL_PRICING: dict[str, tuple[float, float]] = {
     "vertex_ai/gemini-3.1-pro-preview": (2.00, 12.00),
 }
 
-EXPERIMENT_MODELS = ["gpt-4o-mini", "gpt-4o", "claude-sonnet", "gemini-flash", "llama3", "gpt-5.4-mini", "gemini-3.5-flash"]
+EXPERIMENT_MODELS = [
+    "gpt-4o-mini",
+    "gpt-4o",
+    "claude-sonnet",
+    "gemini-flash",
+    "llama3",
+    "gpt-5.4-mini",
+    "gemini-3.5-flash",
+]
 NO_RAG_MODEL = "gpt-4o-mini"
 DEFAULT_STRATEGY = "hybrid_rerank"
 DEFAULT_TOP_K = 5

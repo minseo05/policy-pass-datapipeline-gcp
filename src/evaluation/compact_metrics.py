@@ -271,7 +271,9 @@ def build_operational_metrics(sample: dict[str, Any]) -> dict[str, float | int |
 def compute_extra_metrics(sample: dict[str, Any]) -> dict[str, Any]:
     """Compute all lightweight custom metrics for one QA or service sample."""
     answer = str(sample.get("answer") or sample.get("actual_output") or "")
-    contexts = sample.get("contexts") or [s.get("content", "") for s in sample.get("sources", []) if isinstance(s, dict)]
+    contexts = sample.get("contexts") or [
+        s.get("content", "") for s in sample.get("sources", []) if isinstance(s, dict)
+    ]
     sources = sample.get("sources") or []
     expected_abstain = sample.get("expected_abstain")
     if expected_abstain is None:
