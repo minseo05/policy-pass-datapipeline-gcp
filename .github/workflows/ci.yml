@@ -35,6 +35,10 @@ jobs:
           python -m py_compile src/evaluation/ragas_service_metrics.py
           python -m py_compile scripts/run_compact_qa_eval.py
           python -m py_compile scripts/run_service_log_eval.py
+          python -m py_compile scripts/validate_eval_dataset.py
+
+      - name: Validate evaluation dataset
+        run: python scripts/validate_eval_dataset.py data/eval/qa_pairs.json
 
       - run: pytest
 

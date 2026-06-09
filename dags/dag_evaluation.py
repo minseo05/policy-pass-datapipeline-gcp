@@ -109,6 +109,7 @@ def evaluation_pipeline():
                     llm_resp = response.llm_response
                     model_results.append(
                         {
+                            **sample,
                             "id": sample["id"],
                             "question": query,
                             "ground_truth": sample.get("ground_truth", ""),
@@ -117,7 +118,11 @@ def evaluation_pipeline():
                             "strategy": strategy,
                             "retrieval_latency": response.retrieval_latency,
                             "generation_latency": response.generation_latency,
-                            "total_tokens": llm_resp.total_tokens if llm_resp else 0,
+                            "token_usage": {
+                                "prompt_tokens": llm_resp.prompt_tokens if llm_resp else 0,
+                                "completion_tokens": llm_resp.completion_tokens if llm_resp else 0,
+                                "total_tokens": llm_resp.total_tokens if llm_resp else 0,
+                            },
                             "contexts": [s["content"] for s in response.sources[:3] if s.get("content")],
                             "sources": response.sources[:3],
                         }
@@ -160,6 +165,39 @@ def evaluation_pipeline():
         return evaluated_results
 
     @task()
+    def evaluate_compact_results(rag_results: dict, **context) -> dict:
+        """Compact QA 평가 수행."""
+        from src.evaluation.compact_evaluator import CompactRAGEvaluator
+
+        config_path = REPO_ROOT / "config" / "evaluation_compact.json"
+
+        if config_path.exists():
+            with open(config_path, encoding="utf-8") as f:
+                compact_config = json.load(f).get("qa", {})
+        else:
+            compact_config = {}
+
+        judge_model = compact_config.get("judge_model", "openai/gpt-4o-mini")
+        thresholds = compact_config.get("thresholds", {})
+
+        evaluator = CompactRAGEvaluator(
+            judge_model=judge_model,
+            thresholds=thresholds,
+        )
+
+        compact_results: dict[str, list[dict]] = {}
+
+        for model_key, samples in rag_results.items():
+            logger.info("Compact 평가 시작: model=%s, samples=%d", model_key, len(samples))
+            compact_results[model_key] = evaluator.evaluate_batch(
+                samples=samples,
+                mode="qa",
+            )
+
+        return compact_results
+
+
+    @task()
     def save_results(eval_results: dict, **context) -> str:
         """평가 결과 리포트 저장."""
         from src.evaluation.report import generate_report
@@ -181,10 +219,43 @@ def evaluation_pipeline():
         logger.info("결과 저장: %s", output_path)
         return str(output_path)
 
+    @task()
+    def save_compact_results(compact_results: dict, **context) -> dict[str, str]:
+        """Compact 평가 결과 리포트 저장."""
+        from src.evaluation.compact_evaluator import write_compact_report
+
+        run_id = re.sub(r"[^a-zA-Z0-9_\-]", "_", context["run_id"])
+        compact_dir = RESULTS_DIR / "compact"
+
+        output_paths: dict[str, str] = {}
+
+        for model_key, results in compact_results.items():
+            model_run_id = f"{run_id}_{model_key}"
+            output_path = write_compact_report(
+                results=results,
+                output_dir=compact_dir,
+                run_id=model_run_id,
+                metadata={
+                    "airflow_run_id": context["run_id"],
+                    "mode": "qa",
+                    "strategy": context["params"]["strategy"],
+                    "model": model_key,
+                    "sample_count": len(results),
+                },
+            )
+            logger.info("Compact 결과 저장: model=%s, path=%s", model_key, output_path)
+            output_paths[model_key] = str(output_path)
+
+        return output_paths
+
+
+
     qa = load_qa_dataset()
     rag_results = generate_rag_responses(qa)
     eval_results = evaluate_results(rag_results)
+    compact_results = evaluate_compact_results(rag_results)
     save_results(eval_results)
+    save_compact_results(compact_results)
 
 
 evaluation_pipeline()

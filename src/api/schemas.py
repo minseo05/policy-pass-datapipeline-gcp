@@ -86,6 +86,9 @@ class TokenUsage(BaseModel):
 
 
 class SourceItem(BaseModel):
+    source_id: str = ""
+    policy_id: str = ""
+    chunk_id: str = ""
     content: str
     title: str = ""
     category: str = ""

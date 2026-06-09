@@ -2,7 +2,7 @@
   "version": "compact-rag-eval-v1",
   "description": "RAGAS + LLM-as-Judge + DeepEval 기반에 claim/citation/abstention/service 운영 지표만 보완하는 최소 평가 구성",
   "qa": {
-    "judge_model": "vertex_ai/openai/gpt-4o-mini",
+    "judge_model": "openai/gpt-4o-mini",
     "metrics": [
       "ragas.faithfulness",
       "ragas.answer_relevancy",
@@ -29,7 +29,7 @@
     }
   },
   "service": {
-    "judge_model": "vertex_ai/openai/gpt-4o-mini",
+    "judge_model": "openai/gpt-4o-mini",
     "recommended_sampling": {
       "normal_traffic_rate": 0.05,
       "error_or_low_confidence_rate": 1.0
@@ -53,7 +53,10 @@
       "safety.hallucination_score_max": 0.35,
       "extra.citation_support_rate": 0.65,
       "extra.abstention_accuracy": 1.0,
-      "ops.total_latency_seconds_max": 10.0
+      "ops.total_latency_seconds_max": 10.0,
+      "ops.retrieval_latency_seconds_max": 3.0,
+      "ops.generation_latency_seconds_max": 8.0,
+      "ops.total_tokens_max": 4000
     }
   }
 }
