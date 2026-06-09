@@ -9,21 +9,26 @@
     "housing",
     "welfare"
   ],
-  "total_count": 100,
+  "total_count": 110,
   "difficulty_distribution": {
-    "easy": 46,
-    "medium": 36,
+    "easy": 51,
+    "medium": 41,
     "hard": 18
   },
   "qa_type_distribution": {
     "factual": 84,
     "comparison": 2,
-    "reasoning": 14
+    "reasoning": 14,
+    "no_answer": 10
   },
   "samples": [
     {
       "question": "2026년 청년 유네스코 세계유산 지킴이에 신청할 수 있는 기간은 언제인가요?",
       "ground_truth": "신청기간은 2026년 4월 1일부터 2026년 12월 31일까지입니다.",
+      "expected_claims": [
+        "신청기간은 2026년 4월 1일부터 2026년 12월 31일까지이다"
+      ],
+      "expected_abstain": false,
       "difficulty": "easy",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -36,6 +41,11 @@
     {
       "question": "청년 유네스코 세계유산 지킴이로 활동할 때 지원받는 활동비는 얼마인가요?",
       "ground_truth": "활동비는 1인당 50만원, 1팀당 200만원이 지원됩니다.",
+      "expected_claims": [
+        "활동비는 1인당 50만원이다",
+        "활동비는 1팀당 200만원이다"
+      ],
+      "expected_abstain": false,
       "difficulty": "medium",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -84,6 +94,12 @@
     {
       "question": "청년문화예술패스 지원금은 지역에 따라 어떻게 달라지나요?",
       "ground_truth": "청년문화예술패스 지원금은 지역에 따라 다릅니다. 대구광역시, 대전광역시, 세종특별자치시, 경기도(성남시, 안산시), 전북특별자치도(전주시)는 10만원을 즉시 지급받고, 그 외 지역은 15만원을 지원받습니다.",
+      "expected_claims": [
+        "청년문화예술패스 지원금은 지역에 따라 다르다",
+        "대구광역시, 대전광역시, 세종특별자치시, 경기도 성남시와 안산시, 전북특별자치도 전주시는 10만원을 즉시 지급받는다",
+        "그 외 지역은 15만원을 지원받는다"
+      ],
+      "expected_abstain": false,
       "difficulty": "hard",
       "qa_type": "comparison",
       "reference_doc": "data_portal_policies.json",
@@ -96,6 +112,13 @@
     {
       "question": "국가장학금Ⅰ유형을 신청하기 위한 자격조건은 무엇인가요?",
       "ground_truth": "국가장학금Ⅰ유형을 신청하기 위해서는 12학점, B학점(80/100점) 이상을 충족해야 합니다. 단, 기초･차상위 학생은 C학점 이상, 장애인･자립준비청년은 성적기준이 적용되지 않습니다.",
+      "expected_claims": [
+        "국가장학금Ⅰ유형은 12학점 이상을 충족해야 한다",
+        "국가장학금Ⅰ유형은 B학점 또는 80점 이상을 충족해야 한다",
+        "기초·차상위 학생은 C학점 이상 기준이 적용된다",
+        "장애인과 자립준비청년은 성적기준이 적용되지 않는다"
+      ],
+      "expected_abstain": false,
       "difficulty": "easy",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -156,6 +179,12 @@
     {
       "question": "어학·자격시험 응시료 지원은 언제 신청할 수 있나요?",
       "ground_truth": "어학·자격시험 응시료는 상반기(5.1.~5.31.)와 하반기(10.1.~10.31.)에 선착순으로 접수할 수 있습니다.",
+      "expected_claims": [
+        "어학·자격시험 응시료는 상반기 5월 1일부터 5월 31일까지 접수한다",
+        "어학·자격시험 응시료는 하반기 10월 1일부터 10월 31일까지 접수한다",
+        "어학·자격시험 응시료는 선착순으로 접수한다"
+      ],
+      "expected_abstain": false,
       "difficulty": "medium",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -312,6 +341,10 @@
     {
       "question": "중구 청년 이사비 지원사업의 지원 금액은 얼마인가요?",
       "ground_truth": "이사비 최대 40만원 실비 지원",
+      "expected_claims": [
+        "중구 청년 이사비 지원사업은 이사비를 최대 40만원까지 실비 지원한다"
+      ],
+      "expected_abstain": false,    
       "difficulty": "easy",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -324,6 +357,10 @@
     {
       "question": "중구 청년 이사비 지원사업에 신청할 수 있는 기간은 언제부터 언제까지인가요?",
       "ground_truth": "신청기간은 20260201 ~ 20261130입니다.",
+      "expected_claims": [
+        "중구 청년 이사비 지원사업의 신청기간은 2026년 2월 1일부터 2026년 11월 30일까지이다"
+      ],
+      "expected_abstain": false,
       "difficulty": "hard",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -360,6 +397,11 @@
     {
       "question": "울산청년 구직지원금의 지원 금액은 얼마인가요?",
       "ground_truth": "지원내용에 따르면 구직지원금은 1인당 최대 180만원(월 30만원, 6개월)입니다.",
+      "expected_claims": [
+        "울산청년 구직지원금은 1인당 최대 180만원을 지원한다",
+        "울산청년 구직지원금은 월 30만원씩 6개월 동안 지원한다"
+      ],
+      "expected_abstain": false,
       "difficulty": "easy",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -372,6 +414,15 @@
     {
       "question": "울산청년 구직지원금을 신청하기 위한 자격 조건은 무엇인가요?",
       "ground_truth": "신청자격은 울산광역시에 주민등록을 두고 있는 미취업자, 1985. 1. 2. ~ 2005. 1. 2. 생일자, 최종학년 재학생 또는 졸업·중퇴·수료자, 주 30시간 미만 근로자, 사업자 등록증이 없는 자, 연령별 기준중위소득 요건을 충족하는 자입니다.",
+      "expected_claims": [
+        "울산청년 구직지원금은 울산광역시에 주민등록을 둔 미취업자가 신청 대상이다",
+        "신청 대상 생년월일은 1985년 1월 2일부터 2005년 1월 2일까지이다",
+        "최종학년 재학생 또는 졸업·중퇴·수료자가 신청 대상에 포함된다",
+        "주 30시간 미만 근로자가 신청 대상에 포함된다",
+        "사업자 등록증이 없는 자가 신청 대상에 포함된다",
+        "연령별 기준중위소득 요건을 충족해야 한다"
+      ],
+      "expected_abstain": false,
       "difficulty": "medium",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -384,6 +435,12 @@
     {
       "question": "익산시에 주민등록이 있는 근로자와 학생은 어떤 지원을 받을 수 있나요?",
       "ground_truth": "익산시에 주민등록을 두고 열차 정기승차권을 이용해 관외 지역으로 이동하는 근로자 및 학생(재학생)을 지원하기 위하여 열차 정기승차권 운임비용의 50퍼센트를 지원합니다.",
+      "expected_claims": [
+        "익산시에 주민등록을 둔 근로자와 학생이 지원 대상이다",
+        "관외 지역으로 이동하는 열차 정기승차권 이용자를 지원한다",
+        "열차 정기승차권 운임비용의 50퍼센트를 지원한다"
+      ],
+      "expected_abstain": false,
       "difficulty": "easy",
       "qa_type": "factual",
       "reference_doc": "data_portal_policies.json",
@@ -1220,6 +1277,168 @@
       "policy_title": "영화영상활성화 지원사업(주민시네마스쿨 운영)",
       "policy_id": "20250723005400211485",
       "id": "q100"
+    },
+    {
+      "question": "제공된 청년정책 데이터에 없는 정책의 신청 링크를 알려줘",
+      "ground_truth": "제공된 문맥만으로는 해당 정책의 신청 링크를 확인할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 신청 링크를 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "easy",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "out_of_scope",
+      "policy_title": null,
+      "policy_id": null,
+      "id": "q101"
+    },
+    {
+      "question": "내가 서울에 사는 45세 직장인인데 받을 수 있는 청년 월세 지원을 확정해서 알려줘",
+      "ground_truth": "제공된 문맥만으로는 사용자의 연령, 거주지, 소득, 정책별 자격요건을 모두 확인할 수 없으므로 지원 가능 여부를 확정할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 지원 가능 여부를 확정할 수 없다고 답해야 한다",
+        "연령, 거주지, 소득 등 자격요건 확인이 필요하다고 안내해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "medium",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "eligibility",
+      "policy_title": null,
+      "policy_id": null,
+      "id": "q102"
+    },
+    {
+      "question": "청년문화예술패스 신청 사이트의 정확한 URL을 알려줘",
+      "ground_truth": "제공된 문맥에 정확한 신청 URL이 없다면 임의의 링크를 만들지 말고, 제공된 정보만으로는 정확한 URL을 확인할 수 없다고 답해야 합니다.",
+      "expected_claims": [
+        "정확한 URL이 문맥에 없으면 임의로 링크를 만들지 않아야 한다",
+        "제공된 정보만으로는 정확한 URL을 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "easy",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "welfare",
+      "policy_title": "청년문화예술패스",
+      "policy_id": null,
+      "id": "q103"
+    },
+    {
+      "question": "2027년에 청년 유네스코 세계유산 지킴이 신청기간이 어떻게 바뀌는지 알려줘",
+      "ground_truth": "제공된 문맥만으로는 2027년 신청기간 변경 여부를 확인할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 2027년 신청기간 변경 여부를 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "easy",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "education",
+      "policy_title": "2026년 청년 유네스코 세계유산 지킴이",
+      "policy_id": "20260316005400112167",
+      "id": "q104"
+    },
+    {
+      "question": "울산청년 구직지원금을 받으면 세금이 얼마나 나오나요?",
+      "ground_truth": "제공된 문맥만으로는 울산청년 구직지원금 수령 시 세금 발생 여부나 금액을 확인할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 세금 발생 여부나 금액을 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "medium",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "employment",
+      "policy_title": "울산청년 구직지원금",
+      "policy_id": "20250507005400210785",
+      "id": "q105"
+    },
+    {
+      "question": "국가장학금Ⅰ유형을 신청하면 무조건 얼마를 받을 수 있나요?",
+      "ground_truth": "제공된 문맥만으로는 개인별 국가장학금Ⅰ유형 지급 금액을 확정할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 개인별 지급 금액을 확정할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "medium",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "education",
+      "policy_title": "국가장학금Ⅰ유형(학생직접지원형)",
+      "policy_id": "20250114005400110236",
+      "id": "q106"
+    },
+    {
+      "question": "중구 청년 이사비 지원사업에 작년에 신청했던 사람도 올해 다시 받을 수 있나요?",
+      "ground_truth": "제공된 문맥만으로는 과거 신청 이력자의 재신청 가능 여부를 확인할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 재신청 가능 여부를 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "medium",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "housing",
+      "policy_title": "(중구) 2026년 중구 청년 이사비 지원사업",
+      "policy_id": "20260406005400212463",
+      "id": "q107"
+    },
+    {
+      "question": "대학생 연합생활관 근처 맛집을 추천해줘",
+      "ground_truth": "제공된 청년정책 문맥은 대학생 연합생활관의 위치나 기숙사비 등 정책 정보에 관한 것이며, 근처 맛집 추천 정보는 확인할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 근처 맛집 정보를 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "easy",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "out_of_scope",
+      "policy_title": "대학생 연합생활관(은행권,고양)",
+      "policy_id": "20260123005400112079",
+      "id": "q108"
+    },
+    {
+      "question": "함안청년 창업가 지속성장 지원사업에 합격할 확률은 몇 퍼센트인가요?",
+      "ground_truth": "제공된 문맥만으로는 해당 사업의 합격 확률을 확인할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 합격 확률을 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "easy",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "employment",
+      "policy_title": "함안청년 창업가 지속성장 지원사업",
+      "policy_id": "20251106005400211805",
+      "id": "q109"
+    },
+    {
+      "question": "청년 월세 지원을 받으면 신용점수가 올라가나요?",
+      "ground_truth": "제공된 문맥만으로는 청년 월세 지원과 신용점수 변동의 관계를 확인할 수 없습니다.",
+      "expected_claims": [
+        "제공된 문맥만으로는 청년 월세 지원과 신용점수 변동의 관계를 확인할 수 없다고 답해야 한다"
+      ],
+      "expected_abstain": true,
+      "difficulty": "medium",
+      "qa_type": "no_answer",
+      "reference_doc": null,
+      "reference_source": null,
+      "category": "housing",
+      "policy_title": null,
+      "policy_id": null,
+      "id": "q110"
     }
   ]
 }

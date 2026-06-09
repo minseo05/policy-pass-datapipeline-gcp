@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -99,18 +100,23 @@ class TestRagasMetrics:
         mock_metric = MagicMock()
         mock_metric.ascore = AsyncMock(return_value=mock_result)
 
-        with patch.dict(
-            "sys.modules",
-            {
-                "ragas": MagicMock(),
-                "ragas.metrics": MagicMock(),
-                "ragas.metrics.collections": MagicMock(
-                    Faithfulness=lambda **kw: mock_metric,
-                    AnswerRelevancy=lambda **kw: mock_metric,
-                    ContextPrecision=lambda **kw: mock_metric,
-                    ContextRecall=lambda **kw: mock_metric,
-                ),
-            },
+        with (
+            patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}),
+            patch.dict(
+                "sys.modules",
+                {
+                    "ragas": MagicMock(),
+                    "ragas.llms": MagicMock(llm_factory=lambda *args, **kw: MagicMock()),
+                    "ragas.embeddings": MagicMock(OpenAIEmbeddings=lambda *args, **kw: MagicMock()),
+                    "ragas.metrics": MagicMock(),
+                    "ragas.metrics.collections": MagicMock(
+                        Faithfulness=lambda **kw: mock_metric,
+                        AnswerRelevancy=lambda **kw: mock_metric,
+                        ContextPrecision=lambda **kw: mock_metric,
+                        ContextRecall=lambda **kw: mock_metric,
+                    ),
+                },
+            ),
         ):
             import importlib
 
@@ -139,18 +145,23 @@ class TestRagasMetrics:
         mock_metric_fail = MagicMock()
         mock_metric_fail.ascore = AsyncMock(side_effect=Exception("metric error"))
 
-        with patch.dict(
-            "sys.modules",
-            {
-                "ragas": MagicMock(),
-                "ragas.metrics": MagicMock(),
-                "ragas.metrics.collections": MagicMock(
-                    Faithfulness=lambda **kw: mock_metric_ok,
-                    AnswerRelevancy=lambda **kw: mock_metric_fail,
-                    ContextPrecision=lambda **kw: mock_metric_ok,
-                    ContextRecall=lambda **kw: mock_metric_fail,
-                ),
-            },
+        with (
+            patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}),
+            patch.dict(
+                "sys.modules",
+                {
+                    "ragas": MagicMock(),
+                    "ragas.llms": MagicMock(llm_factory=lambda *args, **kw: MagicMock()),
+                    "ragas.embeddings": MagicMock(OpenAIEmbeddings=lambda *args, **kw: MagicMock()),
+                    "ragas.metrics": MagicMock(),
+                    "ragas.metrics.collections": MagicMock(
+                        Faithfulness=lambda **kw: mock_metric_ok,
+                        AnswerRelevancy=lambda **kw: mock_metric_fail,
+                        ContextPrecision=lambda **kw: mock_metric_ok,
+                        ContextRecall=lambda **kw: mock_metric_fail,
+                    ),
+                },
+            ),
         ):
             import importlib
 

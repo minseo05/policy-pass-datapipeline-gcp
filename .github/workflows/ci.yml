@@ -1,4 +1,5 @@
 name: CI (Lint + Test)
+
 on:
   pull_request:
     branches: [main]
@@ -10,14 +11,39 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - run: pip install -e ".[dev,api]"
+
       - run: ruff check .
+
       - run: ruff format --check .
+
       - name: Validate DAG syntax
         run: python -m py_compile dags/dag_collect_index.py dags/dag_evaluation.py dags/dag_qa_generation.py
+
+      - name: Compile compact eval files
+        run: |
+          python -m py_compile src/evaluation/compact_metrics.py
+          python -m py_compile src/evaluation/compact_evaluator.py
+          python -m py_compile src/evaluation/ragas_service_metrics.py
+          python -m py_compile scripts/run_compact_qa_eval.py
+          python -m py_compile scripts/run_service_log_eval.py
+          python -m py_compile scripts/validate_eval_dataset.py
+
+      - name: Validate evaluation dataset
+        run: python scripts/validate_eval_dataset.py data/eval/qa_pairs.json
+
       - run: pytest
+
+      - name: Run service log eval cheap mode
+        run: |
+          python scripts/run_service_log_eval.py \
+            --log-path data/eval/service_log_sample.jsonl \
+            --skip-llm-metrics
